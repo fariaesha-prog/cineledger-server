@@ -5,6 +5,7 @@
     "lib": ["ES2022"],
     "module": "commonjs",
     "moduleResolution": "node",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
 
     /* Emit */
     "outDir": "./dist",
@@ -30,20 +31,20 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
 
-    /* Path Aliases - clean imports across the codebase */
-    "baseUrl": "./src",
+    /* Path Aliases - clean imports mapped from root directory */
+    "baseUrl": "./",
     "paths": {
-      "@config/*": ["config/*"],
-      "@controllers/*": ["controllers/*"],
-      "@models/*": ["models/*"],
-      "@routes/*": ["routes/*"],
-      "@middleware/*": ["middleware/*"],
-      "@services/*": ["services/*"],
-      "@utils/*": ["utils/*"],
-      "@validators/*": ["validators/*"],
-      "@app-types/*": ["types/*"]
+      "@config/*": ["src/config/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@models/*": ["src/models/*"],
+      "@routes/*": ["src/routes/*"],
+      "@middleware/*": ["src/middleware/*"],
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"],
+      "@validators/*": ["src/validators/*"],
+      "@app-types/*": ["src/types/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/types/express.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
