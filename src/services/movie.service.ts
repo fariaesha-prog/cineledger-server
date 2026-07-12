@@ -165,3 +165,32 @@ export async function fetchSimilarMovies(tmdbId: number, limit = 4) {
   const data = (await response.json()) as TmdbResponse;
   return data.results.slice(0, limit).map(mapTmdbMovie);
 }
+export async function fetchMoviesByIds(ids: number[]) {
+  const results = await Promise.all(
+    ids.map(async (id) => {
+      try {
+        const res = await fetch(`${env.TMDB_BASE_URL}/movie/${id}?api_key=${env.TMDB_API_KEY}`);
+        if (!res.ok) return null;
+
+        const m = (await res.json()) as {
+          id: number;
+          title: string;
+          poster_path: string | null;
+          release_date: string;
+          vote_average: number;
+        };
+
+        return {
+          id: m.id,
+          title: m.title,
+          posterPath: m.poster_path,
+          releaseYear: m.release_date ? new Date(m.release_date).getFullYear() : null,
+          rating: m.vote_average,
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+  return results.filter(Boolean);
+}

@@ -3,7 +3,7 @@ import { asyncHandler } from '@utils/asyncHandler';
 import { AppError } from '@utils/AppError';
 import { User } from '@models/User.model';
 import type { ApiSuccessResponse } from '@app-types/index';
-
+import { fetchMoviesByIds } from '@services/movie.service';
 async function updateList(
   userId: string,
   field: 'watchlist' | 'favorites',
@@ -17,7 +17,19 @@ async function updateList(
   if (!user) throw new AppError('User not found', 404);
   return user[field];
 }
+export const getWatchlistMovies = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req as Request & { userId?: string }).userId!;
+  const user = await User.findById(userId);
+  const movies = await fetchMoviesByIds(user?.watchlist ?? []);
+  respond(res, 'Watchlist fetched', { movies });
+});
 
+export const getFavoriteMovies = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req as Request & { userId?: string }).userId!;
+  const user = await User.findById(userId);
+  const movies = await fetchMoviesByIds(user?.favorites ?? []);
+  respond(res, 'Favorites fetched', { movies });
+});
 export const addToWatchlist = asyncHandler(async (req: Request, res: Response) => {
   const tmdbId = parseInt(req.params.tmdbId, 10);
   const userId = (req as Request & { userId?: string }).userId!;

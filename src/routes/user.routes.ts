@@ -5,12 +5,15 @@ import {
   removeFromWatchlist,
   addToFavorites,
   removeFromFavorites,
+  getWatchlistMovies,
+  getFavoriteMovies,
 } from '@controllers/user.controller';
 
 const router = Router();
 
 router.use(protect); // every route below requires auth
-
+router.get('/watchlist', getWatchlistMovies);
+router.get('/favorites', getFavoriteMovies);
 router.post('/watchlist/:tmdbId', addToWatchlist);
 router.delete('/watchlist/:tmdbId', removeFromWatchlist);
 router.post('/favorites/:tmdbId', addToFavorites);
