@@ -88,7 +88,7 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
-const userId = (req as Request & { userId?: string }).userId;
+  const userId = (req as Request & { userId?: string }).userId;
   if (!userId) {
     throw new AppError('Not authenticated', 401);
   }
@@ -102,7 +102,14 @@ const userId = (req as Request & { userId?: string }).userId;
     success: true,
     message: 'Current user fetched',
     data: {
-      user: { _id: user._id, name: user.name, email: user.email },
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+        watchlist: user.watchlist,
+        favorites: user.favorites,
+      },
     },
   };
   res.status(200).json(response);

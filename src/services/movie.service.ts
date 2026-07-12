@@ -106,3 +106,62 @@ export async function fetchTrendingMovies(limit = 4) {
   const data = (await response.json()) as TmdbResponse;
   return data.results.slice(0, limit).map(mapTmdbMovie);
 }
+interface TmdbMovieDetails {
+  id: number;
+  title: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  release_date: string;
+  runtime: number;
+  vote_average: number;
+  original_language: string;
+  genres: { id: number; name: string }[];
+  spoken_languages: { english_name: string }[];
+}
+
+interface TmdbCredits {
+  cast: { id: number; name: string; character: string; profile_path: string | null }[];
+  crew: { id: number; name: string; job: string }[];
+}
+
+interface TmdbVideos {
+  results: { key: string; site: string; type: string }[];
+}
+
+export async function fetchMovieDetails(tmdbId: number) {
+  const base = env.TMDB_BASE_URL;
+  const key = env.TMDB_API_KEY;
+
+  const [movieRes, creditsRes, videosRes] = await Promise.all([
+    fetch(`${base}/movie/${tmdbId}?api_key=${key}`),
+    fetch(`${base}/movie/${tmdbId}/credits?api_key=${key}`),
+    fetch(`${base}/movie/${tmdbId}/videos?api_key=${key}`),
+  ]);
+
+  if (!movieRes.ok) {
+    throw new AppError('Movie not found', 404);
+  }
+
+  const movie = (await movieRes.json()) as TmdbMovieDetails;
+  const credits = (await creditsRes.json()) as TmdbCredits;
+  const videos = (await videosRes.json()) as TmdbVideos;
+
+  const director = credits.crew.find((p) => p.job === 'Director')?.name ?? 'Unknown';
+  const cast = credits.cast.slice(0, 6);
+  const trailer = videos.results.find((v) => v.type === 'Trailer' && v.site === 'YouTube');
+
+  return { movie, director, cast, trailerKey: trailer?.key };
+}
+export async function fetchSimilarMovies(tmdbId: number, limit = 4) {
+  const url = new URL(`${env.TMDB_BASE_URL}/movie/${tmdbId}/similar`);
+  url.searchParams.set('api_key', env.TMDB_API_KEY);
+
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new AppError('Failed to fetch similar movies from TMDB', 502);
+  }
+
+  const data = (await response.json()) as TmdbResponse;
+  return data.results.slice(0, limit).map(mapTmdbMovie);
+}

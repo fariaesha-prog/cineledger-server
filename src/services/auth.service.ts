@@ -4,7 +4,7 @@ import { signAccessToken, signRefreshToken } from '@utils/jwt';
 import type { RegisterInput, LoginInput } from '@validators/auth.validator';
 
 interface AuthResult {
-  user: Pick<IUser, '_id' | 'name' | 'email'>;
+  user: Pick<IUser, '_id' | 'name' | 'email' | 'avatarUrl' | 'watchlist' | 'favorites'>;
   accessToken: string;
   refreshToken: string;
 }
@@ -22,7 +22,7 @@ export async function registerUser(input: RegisterInput): Promise<AuthResult> {
   const refreshToken = signRefreshToken(payload);
 
   return {
-    user: { _id: user._id, name: user.name, email: user.email },
+    user: { _id: user._id, name: user.name, email: user.email, avatarUrl: user.avatarUrl, watchlist: user.watchlist, favorites: user.favorites },
     accessToken,
     refreshToken,
   };
@@ -44,7 +44,7 @@ export async function loginUser(input: LoginInput): Promise<AuthResult> {
   const refreshToken = signRefreshToken(payload);
 
   return {
-    user: { _id: user._id, name: user.name, email: user.email },
+    user: { _id: user._id, name: user.name, email: user.email, avatarUrl: user.avatarUrl, watchlist: user.watchlist, favorites: user.favorites },
     accessToken,
     refreshToken,
   };

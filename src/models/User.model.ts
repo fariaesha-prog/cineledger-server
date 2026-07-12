@@ -6,7 +6,11 @@ export interface IUser extends Document {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  password: string;
+  password?: string;
+  avatarUrl?: string;
+  googleId?: string;
+  watchlist: number[];
+  favorites: number[];
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;
@@ -31,21 +35,41 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
       minlength: 8,
       select: false,
+      required: function (this: IUser) {
+        return !this.googleId;
+      },
+    },
+    avatarUrl: {
+      type: String,
+      trim: true,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    watchlist: {
+      type: [Number],
+      default: [],
+    },
+    favorites: {
+      type: [Number],
+      default: [],
     },
   },
   { timestamps: true }
 );
 
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
   this.password = await bcrypt.hash(this.password, env.BCRYPT_SALT_ROUNDS);
   next();
 });
 
 userSchema.methods.comparePassword = async function (candidate: string): Promise<boolean> {
+  if (!this.password) return false;
   return bcrypt.compare(candidate, this.password);
 };
 
