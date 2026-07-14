@@ -8,6 +8,8 @@ interface CreateReviewInput {
   moviePosterPath?: string | null;
   rating: number;
   text: string;
+  movieGenres?: string[];
+movieDirector?: string;
 }
 
 export async function createReview(input: CreateReviewInput) {

@@ -22,4 +22,5 @@ router.post('/favorites/:tmdbId', addToFavorites);
 router.delete('/favorites/:tmdbId', removeFromFavorites);
 router.get('/stats', getMyStats);
 router.patch('/profile', updateProfile);
+router.get('/stats', getMyStats);
 export default router;

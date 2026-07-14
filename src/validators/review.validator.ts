@@ -7,6 +7,8 @@ export const createReviewSchema = z.object({
     moviePosterPath: z.string().trim().nullable().optional(),
     rating: z.coerce.number().min(1).max(5),
     text: z.string().trim().min(10, 'Review must be at least 10 characters').max(2000),
+    movieGenres: z.array(z.string()).optional().default([]),
+movieDirector: z.string().optional().default('Unknown'),
   }),
 });
 

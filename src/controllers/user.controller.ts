@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '@utils/asyncHandler';
 import { AppError } from '@utils/AppError';
 import { User } from '@models/User.model';
-import { Review } from '@models/Review.model';
 import type { ApiSuccessResponse } from '@app-types/index';
 import { fetchMoviesByIds } from '@services/movie.service';
+import { getUserStats } from '@services/stats.service';
 async function updateList(
   userId: string,
   field: 'watchlist' | 'favorites',
@@ -18,6 +18,11 @@ async function updateList(
   if (!user) throw new AppError('User not found', 404);
   return user[field];
 }
+export const getMyStats = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req as Request & { userId?: string }).userId!;
+  const stats = await getUserStats(userId);
+  respond(res, 'Stats fetched', stats);
+});
 export const getWatchlistMovies = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req as Request & { userId?: string }).userId!;
   const user = await User.findById(userId);
@@ -63,41 +68,9 @@ function respond(res: Response, message: string, data: unknown) {
   const response: ApiSuccessResponse = { success: true, message, data };
   res.status(200).json(response);
 }
-function getPersonality(reviewCount: number): { tier: string; description: string } {
-  if (reviewCount >= 75) {
-    return { tier: 'The Auteur', description: 'Top 5% of cinephiles on CineLedger' };
-  }
-  if (reviewCount >= 35) {
-    return { tier: 'The Critic', description: 'Sharp eye for great films' };
-  }
-  if (reviewCount >= 15) {
-    return { tier: 'The Cinephile', description: 'A true movie lover' };
-  }
-  if (reviewCount >= 5) {
-    return { tier: 'The Casual Viewer', description: 'Building your watch history' };
-  }
-  return { tier: 'The Newcomer', description: 'Just getting started' };
-}
 
-export const getMyStats = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as Request & { userId?: string }).userId!;
 
-  const user = await User.findById(userId);
-  if (!user) throw new AppError('User not found', 404);
 
-  const reviewCount = await Review.countDocuments({ userId });
-  const personality = getPersonality(reviewCount);
-
-  respond(res, 'Stats fetched', {
-    stats: {
-      filmsLogged: reviewCount,
-      reviews: reviewCount,
-      watchlist: user.watchlist.length,
-      favorites: user.favorites.length,
-    },
-    personality,
-  });
-});
 
 export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req as Request & { userId?: string }).userId!;
@@ -158,4 +131,11 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
     },
   };
   res.status(200).json(response);
+});
+
+export const getMyStats = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req as Request & { userId?: string }).userId!;
+  const stats = await getUserStats(userId);
+
+  respond(res, 'Stats fetched', stats);
 });
