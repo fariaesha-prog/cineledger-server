@@ -41,7 +41,7 @@ export function useMovies() {
   }, [filters]);
 
   const updateFilter = (key: keyof MovieFilters, value: any) => {
-    setFilters((prev) => ({
+    setFilters((prev: any) => ({
       ...prev,
       [key]: value,
       page: key === 'page' ? value : 1, // Reset to page 1 on filter changes
