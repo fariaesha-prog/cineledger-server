@@ -7,6 +7,8 @@ import {
   removeFromFavorites,
   getWatchlistMovies,
   getFavoriteMovies,
+   getMyStats,
+  updateProfile,
 } from '@controllers/user.controller';
 
 const router = Router();
@@ -18,5 +20,6 @@ router.post('/watchlist/:tmdbId', addToWatchlist);
 router.delete('/watchlist/:tmdbId', removeFromWatchlist);
 router.post('/favorites/:tmdbId', addToFavorites);
 router.delete('/favorites/:tmdbId', removeFromFavorites);
-
+router.get('/stats', getMyStats);
+router.patch('/profile', updateProfile);
 export default router;

@@ -8,6 +8,9 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   avatarUrl?: string;
+  coverImageUrl?: string;
+  bio?: string;
+  favoriteGenre?: string;
   googleId?: string;
   watchlist: number[];
   favorites: number[];
@@ -44,6 +47,21 @@ const userSchema = new Schema<IUser>(
     avatarUrl: {
       type: String,
       trim: true,
+    },
+    coverImageUrl: {
+      type: String,
+      trim: true,
+    },
+    bio: {
+      type: String,
+      trim: true,
+      maxlength: 250,
+      default: '',
+    },
+    favoriteGenre: {
+      type: String,
+      trim: true,
+      default: '',
     },
     googleId: {
       type: String,

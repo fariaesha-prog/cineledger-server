@@ -99,18 +99,22 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const response: ApiSuccessResponse = {
-    success: true,
-    message: 'Current user fetched',
-    data: {
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        avatarUrl: user.avatarUrl,
-        watchlist: user.watchlist,
-        favorites: user.favorites,
-      },
+  success: true,
+  message: 'Current user fetched',
+  data: {
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+      coverImageUrl: user.coverImageUrl,
+      bio: user.bio,
+      favoriteGenre: user.favoriteGenre,
+      watchlist: user.watchlist,
+      favorites: user.favorites,
+      createdAt: user.createdAt,
     },
-  };
+  },
+};
   res.status(200).json(response);
 });
