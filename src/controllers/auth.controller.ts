@@ -77,6 +77,7 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const newAccessToken = signAccessToken({ userId: payload.userId });
+  
   res.cookie(COOKIE_NAMES.ACCESS_TOKEN, newAccessToken, accessCookieOptions);
 
   const response: ApiSuccessResponse = {

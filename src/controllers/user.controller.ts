@@ -18,11 +18,7 @@ async function updateList(
   if (!user) throw new AppError('User not found', 404);
   return user[field];
 }
-export const getMyStats = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as Request & { userId?: string }).userId!;
-  const stats = await getUserStats(userId);
-  respond(res, 'Stats fetched', stats);
-});
+
 export const getWatchlistMovies = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req as Request & { userId?: string }).userId!;
   const user = await User.findById(userId);
