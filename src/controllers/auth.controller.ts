@@ -1,28 +1,26 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '@utils/asyncHandler';
 import { AppError } from '@utils/AppError';
-import { env } from '@config/env';
 import { COOKIE_NAMES } from '@config/constants';
 import { registerUser, loginUser, getUserById } from '@services/auth.service';
 import { verifyRefreshToken, signAccessToken } from '@utils/jwt';
 import type { ApiSuccessResponse } from '@app-types/index';
 
-const isProd = env.NODE_ENV === 'production';
+
 
 const accessCookieOptions = {
   httpOnly: true,
-  secure: isProd,
-  sameSite: 'lax' as const,
+  secure: true,
+  sameSite: 'none' as const,
   maxAge: 15 * 60 * 1000,
 };
 
 const refreshCookieOptions = {
   httpOnly: true,
-  secure: isProd,
-  sameSite: 'lax' as const,
+  secure: true,
+  sameSite: 'none' as const,
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
-
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { user, accessToken, refreshToken } = await registerUser(req.body);
 
